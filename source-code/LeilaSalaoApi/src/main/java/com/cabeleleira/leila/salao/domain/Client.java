@@ -1,5 +1,7 @@
 package com.cabeleleira.leila.salao.domain;
 
+import com.cabeleleira.leila.salao.dto.CreateClientRequestDTO;
+import com.cabeleleira.leila.salao.dto.CreateUserRequestDTO;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -43,6 +45,16 @@ public final class Client {
         this.name = name;
         this.phoneNumber = phoneNumber;
         this.createdAt = createdAt;
+    }
+
+    public static Client from(User user, CreateClientRequestDTO clientDto) {
+        return new Client(
+                null,
+                user,
+                clientDto.name(),
+                clientDto.phoneNumber(),
+                Instant.now()
+        );
     }
 
     public UUID getId() {

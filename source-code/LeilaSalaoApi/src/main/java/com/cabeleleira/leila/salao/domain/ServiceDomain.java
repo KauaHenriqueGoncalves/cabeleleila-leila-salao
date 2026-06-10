@@ -7,7 +7,7 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "services")
-public final class Service {
+public final class ServiceDomain {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
@@ -27,10 +27,10 @@ public final class Service {
     @Column(nullable = false)
     private Boolean active;
 
-    public Service() {
+    public ServiceDomain() {
     }
 
-    public Service(UUID id, String name, String description, Integer durationMinutes, Double price, Boolean active) {
+    public ServiceDomain(UUID id, String name, String description, Integer durationMinutes, Double price, Boolean active) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -90,8 +90,8 @@ public final class Service {
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
-        Service service = (Service) o;
-        return Objects.equals(id, service.id);
+        ServiceDomain serviceDomain = (ServiceDomain) o;
+        return Objects.equals(id, serviceDomain.id);
     }
 
     @Override

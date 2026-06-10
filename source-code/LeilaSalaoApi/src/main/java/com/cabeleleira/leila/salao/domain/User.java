@@ -1,8 +1,11 @@
 package com.cabeleleira.leila.salao.domain;
 
+import com.cabeleleira.leila.salao.dto.CreateUserRequestDTO;
 import com.cabeleleira.leila.salao.enums.UsersRole;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.time.Instant;
 import java.util.Objects;
@@ -42,6 +45,17 @@ public final class User {
         this.role = role;
         this.active = active;
         this.createdAt = createdAt;
+    }
+
+    public static User from(CreateUserRequestDTO dto, BCryptPasswordEncoder passwordEncoder) {
+        return new User(
+                null,
+                dto.email(),
+                passwordEncoder.encode(dto.password()),
+                UsersRole.CLIENT,
+                true,
+                Instant.now()
+        );
     }
 
     public UUID getId() {

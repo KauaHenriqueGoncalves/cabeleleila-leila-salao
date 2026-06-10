@@ -64,12 +64,12 @@ public final class Scheduling {
                     @Index(name = "idx_scheduling_services_scheduling_id_services_id", columnList = "scheduling_id, services_id")
             }
     )
-    private List<Service> services = new ArrayList<>();
+    private List<ServiceDomain> serviceDomains = new ArrayList<>();
 
     public Scheduling(){
     }
 
-    public Scheduling(UUID id, Client client, LocalDateTime dateHours, SchedulingStatus status, String observations, SchedulingOrigin origin, Double priceCharged, Instant createdAt, Instant updatedAt, List<Service> services) {
+    public Scheduling(UUID id, Client client, LocalDateTime dateHours, SchedulingStatus status, String observations, SchedulingOrigin origin, Double priceCharged, Instant createdAt, Instant updatedAt, List<ServiceDomain> serviceDomains) {
         this.id = id;
         this.client = client;
         this.dateHours = dateHours;
@@ -79,7 +79,7 @@ public final class Scheduling {
         this.priceCharged = priceCharged;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
-        this.services = services;
+        this.serviceDomains = serviceDomains;
     }
 
     public UUID getId() {
@@ -154,12 +154,12 @@ public final class Scheduling {
         this.updatedAt = updatedAt;
     }
 
-    public List<Service> getServices() {
-        return services;
+    public List<ServiceDomain> getServices() {
+        return serviceDomains;
     }
 
-    public void setServices(List<Service> services) {
-        this.services = services;
+    public void setServices(List<ServiceDomain> serviceDomains) {
+        this.serviceDomains = serviceDomains;
     }
 
     @Override

@@ -3,6 +3,7 @@ package com.cabeleleira.leila.salao.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -31,6 +32,7 @@ public class SecurityConfig {
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(HttpMethod.POST, "/clients").permitAll()
                         .requestMatchers("/console-h2/**").permitAll()  // libera o H2
                         .anyRequest().authenticated()
                 );
@@ -47,9 +49,10 @@ public class SecurityConfig {
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(HttpMethod.POST, "/clients").permitAll()
                         .anyRequest().authenticated()
-                );
-//            .oauth2ResourceServer(oauth -> oauth.jwt(withDefaults()));
+                )
+                .oauth2ResourceServer(oauth -> oauth.jwt(withDefaults()));
         return http.build();
     }
 
