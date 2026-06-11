@@ -1,5 +1,6 @@
 package com.cabeleleira.leila.salao.domain;
 
+import com.cabeleleira.leila.salao.dto.CreateServiceRequestDTO;
 import jakarta.persistence.*;
 
 import java.util.Objects;
@@ -37,6 +38,17 @@ public final class ServiceDomain {
         this.durationMinutes = durationMinutes;
         this.price = price;
         this.active = active;
+    }
+
+    public static ServiceDomain from(CreateServiceRequestDTO dto) {
+        return new ServiceDomain(
+                null,
+                dto.name(),
+                dto.description(),
+                dto.durationMinutes(),
+                dto.price(),
+                true
+        );
     }
 
     public UUID getId() {

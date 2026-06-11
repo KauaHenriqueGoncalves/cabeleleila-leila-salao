@@ -7,5 +7,6 @@ import java.util.UUID;
 
 public interface IUserService {
     User findById(UUID id);
+    User findByEmail(String email);
     User createRoleClient(CreateUserRequestDTO dto);
 }

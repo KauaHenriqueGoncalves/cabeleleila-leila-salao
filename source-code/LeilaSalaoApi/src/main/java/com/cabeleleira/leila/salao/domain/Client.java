@@ -1,7 +1,6 @@
 package com.cabeleleira.leila.salao.domain;
 
 import com.cabeleleira.leila.salao.dto.CreateClientRequestDTO;
-import com.cabeleleira.leila.salao.dto.CreateUserRequestDTO;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 

@@ -1,6 +1,7 @@
 package com.cabeleleira.leila.salao.auth.service;
 
-import com.cabeleleira.leila.salao.auth.dto.LoginResponse;
+import com.cabeleleira.leila.salao.auth.dto.LoginResponseDTO;
+import com.cabeleleira.leila.salao.auth.service.interfaces.IJwtService;
 import org.springframework.security.oauth2.jwt.*;
 import org.springframework.stereotype.Service;
 
@@ -22,18 +23,18 @@ public class JwtService implements IJwtService {
     }
 
     @Override
-    public String generateAccessToken(LoginResponse loginResponse) {
+    public String generateAccessToken(LoginResponseDTO loginResponseDTO) {
         Instant now = Instant.now();
         JwtClaimsSet claimsSet = JwtClaimsSet.builder()
                 .issuer("leila-salao-api")
                 .audience(List.of("system-web", "leila-api"))
                 .issuedAt(now)
                 .expiresAt(now.plus(Duration.ofHours(10))) // Não irei fazer refresh token
-                .subject(loginResponse.id().toString())
+                .subject(loginResponseDTO.id().toString())
                 .claims(claims -> {
                     claims.put(
                             "role",
-                            loginResponse.role()
+                            loginResponseDTO.role()
                     );
                     claims.put("type", "access_token");
                 })

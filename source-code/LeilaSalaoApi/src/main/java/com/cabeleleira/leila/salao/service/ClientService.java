@@ -2,6 +2,7 @@ package com.cabeleleira.leila.salao.service;
 
 import com.cabeleleira.leila.salao.domain.Client;
 import com.cabeleleira.leila.salao.domain.User;
+import com.cabeleleira.leila.salao.dto.ClientToListResponseDTO;
 import com.cabeleleira.leila.salao.dto.CreateClientRequestDTO;
 import com.cabeleleira.leila.salao.repository.ClientRepository;
 import com.cabeleleira.leila.salao.service.interfaces.IClientService;
@@ -12,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -27,8 +29,24 @@ public class ClientService implements IClientService {
     }
 
     @Override
+    public List<ClientToListResponseDTO> findAll() {
+        return clientRepository.findAll()
+                .stream()
+                .map(ClientToListResponseDTO::from)
+                .toList();
+    }
+
+    @Override
     public Client findById(UUID id) {
         return clientRepository.findById(id)
+                .orElseThrow(() -> {
+                    return new NotFoundObjectException("Não encontrou o cliente");
+                });
+    }
+
+    @Override
+    public Client findByUserId(UUID id) {
+        return clientRepository.findByUserId(id)
                 .orElseThrow(() -> {
                     return new NotFoundObjectException("Não encontrou o cliente");
                 });
@@ -40,5 +58,11 @@ public class ClientService implements IClientService {
         User user = userService.createRoleClient(dto.user());
         Client client = Client.from(user, dto);
         return clientRepository.save(client).getId();
+    }
+
+    @Override
+    public void deleteById(UUID id) {
+        Client c = findById(id);
+        clientRepository.deleteById(id);
     }
 }

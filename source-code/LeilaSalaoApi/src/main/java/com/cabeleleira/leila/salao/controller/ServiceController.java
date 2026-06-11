@@ -1,8 +1,8 @@
 package com.cabeleleira.leila.salao.controller;
 
-import com.cabeleleira.leila.salao.dto.ClientToListResponseDTO;
-import com.cabeleleira.leila.salao.dto.CreateClientRequestDTO;
-import com.cabeleleira.leila.salao.service.interfaces.IClientService;
+import com.cabeleleira.leila.salao.dto.CreateServiceRequestDTO;
+import com.cabeleleira.leila.salao.dto.ServiceToListResponseDTO;
+import com.cabeleleira.leila.salao.service.interfaces.IServiceDomainService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -14,19 +14,20 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/clients")
-public class ClientController {
-    private final IClientService clientService;
+@RequestMapping("/services")
+public class ServiceController {
+    private final IServiceDomainService serviceDomainService;
 
-    public ClientController(IClientService clientService) {
-        this.clientService = clientService;
+    public ServiceController(IServiceDomainService serviceDomainService) {
+        this.serviceDomainService = serviceDomainService;
     }
 
     @PostMapping
-    public ResponseEntity<Void> createClient(
-            @RequestBody @Valid CreateClientRequestDTO dto
+    @PreAuthorize("hasRole('admin')")
+    public ResponseEntity<Void> createService(
+            @RequestBody @Valid CreateServiceRequestDTO dto
     ) {
-        UUID id = clientService.create(dto);
+        UUID id = serviceDomainService.create(dto);
         URI uri = ServletUriComponentsBuilder
                 .fromCurrentRequest()
                 .path("/{id}")
@@ -36,9 +37,9 @@ public class ClientController {
     }
 
     @GetMapping
-    @PreAuthorize("hasRole('admin')")
-    public ResponseEntity<List<ClientToListResponseDTO>> findAllClientToList() {
-        List<ClientToListResponseDTO> response = clientService.findAll();
+    @PreAuthorize("hasAnyRole('admin', 'client')")
+    public ResponseEntity<List<ServiceToListResponseDTO>> findAll() {
+        List<ServiceToListResponseDTO> response = serviceDomainService.findAll();
         return ResponseEntity.ok(response);
     }
 
@@ -47,7 +48,7 @@ public class ClientController {
     public ResponseEntity<Void> deleteById(
             @PathVariable UUID id
     ) {
-        clientService.deleteById(id);
+        serviceDomainService.deleteById(id);
         return ResponseEntity.noContent().build();
     }
 }

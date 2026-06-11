@@ -1,5 +1,6 @@
 package com.cabeleleira.leila.salao.domain;
 
+import com.cabeleleira.leila.salao.dto.CreateSchedulingRequestDTO;
 import com.cabeleleira.leila.salao.enums.SchedulingOrigin;
 import com.cabeleleira.leila.salao.enums.SchedulingStatus;
 import jakarta.persistence.*;
@@ -80,6 +81,21 @@ public final class Scheduling {
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
         this.serviceDomains = serviceDomains;
+    }
+
+    public static Scheduling from(Client client, List<ServiceDomain> services, double finalPrice, CreateSchedulingRequestDTO dto) {
+        return new Scheduling(
+                null,
+                client,
+                dto.dateHours(),
+                SchedulingStatus.SCHEDULED,
+                dto.observations(),
+                dto.origin(),
+                finalPrice,
+                Instant.now(),
+                null,
+                services
+        );
     }
 
     public UUID getId() {

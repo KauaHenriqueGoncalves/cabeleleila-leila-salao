@@ -35,6 +35,14 @@ public class UserService implements IUserService {
     }
 
     @Override
+    public User findByEmail(String email) {
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> {
+                    return new NotFoundObjectException("Não foi encontrado usuário");
+                });
+    }
+
+    @Override
     @Transactional
     public User createRoleClient(CreateUserRequestDTO dto) {
         ensureEmailAlreadyExist(dto.email());
