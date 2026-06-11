@@ -6,12 +6,14 @@ import com.cabeleleira.leila.salao.dto.SchedulingToListResponseDTO;
 import com.cabeleleira.leila.salao.dto.UpdateSchedulingAdminRequestDTO;
 import com.cabeleleira.leila.salao.dto.UpdateSchedulingClientRequestDTO;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
 public interface ISchedulingService {
     List<SchedulingToListResponseDTO> findAll();
     List<SchedulingToListResponseDTO> findAllByUser(UUID userId);
+    List<SchedulingToListResponseDTO> findAllBetweenDates(LocalDate startDate, LocalDate endDate);
     Scheduling findById(UUID id);
     UUID create(CreateSchedulingRequestDTO dto, UUID userId);
     void updateClient(UUID scheduledId, UpdateSchedulingClientRequestDTO dto);

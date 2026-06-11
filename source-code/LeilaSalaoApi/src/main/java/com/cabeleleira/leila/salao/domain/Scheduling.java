@@ -98,6 +98,21 @@ public final class Scheduling {
         );
     }
 
+    public static Scheduling copy(Scheduling s) {
+        return new Scheduling(
+                s.getId(),
+                s.getClient(),
+                s.getDateHours(),
+                s.getStatus(),
+                s.getObservations(),
+                s.getOrigin(),
+                s.getPriceCharged(),
+                s.getCreatedAt(),
+                s.getUpdatedAt(),
+                s.getServices()
+        );
+    }
+
     public UUID getId() {
         return id;
     }

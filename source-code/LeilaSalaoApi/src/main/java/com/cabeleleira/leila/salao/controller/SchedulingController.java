@@ -1,9 +1,6 @@
 package com.cabeleleira.leila.salao.controller;
 
-import com.cabeleleira.leila.salao.dto.CreateSchedulingRequestDTO;
-import com.cabeleleira.leila.salao.dto.SchedulingToListResponseDTO;
-import com.cabeleleira.leila.salao.dto.UpdateSchedulingAdminRequestDTO;
-import com.cabeleleira.leila.salao.dto.UpdateSchedulingClientRequestDTO;
+import com.cabeleleira.leila.salao.dto.*;
 import com.cabeleleira.leila.salao.service.interfaces.ISchedulingService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -55,6 +52,15 @@ public class SchedulingController {
     ) {
         UUID userId = UUID.fromString(token.getName());
         List<SchedulingToListResponseDTO> response = schedulingService.findAllByUser(userId);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/dates")
+    public ResponseEntity<List<SchedulingToListResponseDTO>> findAllBetweenDates(
+            @RequestBody @Valid SchedulingBetweenDatesDTO betweenDatesDTO
+    ) {
+        List<SchedulingToListResponseDTO> response =
+                schedulingService.findAllBetweenDates(betweenDatesDTO.start(), betweenDatesDTO.end());
         return ResponseEntity.ok(response);
     }
 

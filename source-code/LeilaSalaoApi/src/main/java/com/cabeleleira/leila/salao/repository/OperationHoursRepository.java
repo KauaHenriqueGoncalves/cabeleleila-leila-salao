@@ -1,9 +1,0 @@
-package com.cabeleleira.leila.salao.repository;
-
-import com.cabeleleira.leila.salao.domain.OperationHours;
-import org.springframework.data.jpa.repository.JpaRepository;
-
-import java.util.UUID;
-
-public interface OperationHoursRepository extends JpaRepository<OperationHours, UUID> {
-}

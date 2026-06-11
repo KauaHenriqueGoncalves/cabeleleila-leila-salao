@@ -7,8 +7,10 @@ import com.cabeleleira.leila.salao.dto.CreateSchedulingRequestDTO;
 import com.cabeleleira.leila.salao.dto.SchedulingToListResponseDTO;
 import com.cabeleleira.leila.salao.dto.UpdateSchedulingAdminRequestDTO;
 import com.cabeleleira.leila.salao.dto.UpdateSchedulingClientRequestDTO;
+import com.cabeleleira.leila.salao.enums.HistoryChangedFor;
 import com.cabeleleira.leila.salao.repository.SchedulingRepository;
 import com.cabeleleira.leila.salao.service.interfaces.IClientService;
+import com.cabeleleira.leila.salao.service.interfaces.IHistoryChangesService;
 import com.cabeleleira.leila.salao.service.interfaces.ISchedulingService;
 import com.cabeleleira.leila.salao.service.interfaces.IServiceDomainService;
 import com.cabeleleira.leila.salao.shared.exceptions.BusinessException;
@@ -20,6 +22,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -31,11 +34,13 @@ public class SchedulingService implements ISchedulingService {
     private static final Logger log = LoggerFactory.getLogger(SchedulingService.class);
 
     private final IClientService clientService;
+    private final IHistoryChangesService historyChangesService;
     private final IServiceDomainService serviceDomainService;
     private final SchedulingRepository schedulingRepository;
 
-    public SchedulingService(IClientService clientService, IServiceDomainService serviceDomainService, SchedulingRepository schedulingRepository) {
+    public SchedulingService(IClientService clientService, IHistoryChangesService historyChangesService, IServiceDomainService serviceDomainService, SchedulingRepository schedulingRepository) {
         this.clientService = clientService;
+        this.historyChangesService = historyChangesService;
         this.serviceDomainService = serviceDomainService;
         this.schedulingRepository = schedulingRepository;
     }
@@ -55,6 +60,17 @@ public class SchedulingService implements ISchedulingService {
         return schedulingRepository.findAllByClientId(client.getId())
                 .stream()
                 .sorted(Comparator.comparing(Scheduling::getCreatedAt))
+                .map(SchedulingToListResponseDTO::from)
+                .toList();
+    }
+
+    @Override
+    public List<SchedulingToListResponseDTO> findAllBetweenDates(LocalDate startDate, LocalDate endDate) {
+        LocalDateTime start = startDate.atStartOfDay();
+        LocalDateTime end = endDate.atTime(23, 59, 59);
+        return schedulingRepository
+                .findAllByDateHoursBetween(start, end)
+                .stream()
                 .map(SchedulingToListResponseDTO::from)
                 .toList();
     }
@@ -87,6 +103,7 @@ public class SchedulingService implements ISchedulingService {
     @Transactional
     public void updateClient(UUID scheduledId, UpdateSchedulingClientRequestDTO dto) {
         Scheduling s = findById(scheduledId);
+        Scheduling before = Scheduling.copy(s);
         if (LocalDateTime.now().plus(Duration.ofDays(2)).isAfter(s.getDateHours())) {
             throw new BusinessException("Não é possivel fazer alteração faltando 2 dias, faça a alteração pelo telefone");
         }
@@ -102,12 +119,15 @@ public class SchedulingService implements ISchedulingService {
         s.setPriceCharged(finalPrice);
         s.setServices(services);
         s.setUpdatedAt(Instant.now());
+        Scheduling after = Scheduling.copy(s);
+        historyChangesService.create(before, after, HistoryChangedFor.CLIENT);
     }
 
     @Override
     @Transactional
     public void updateAdmin(UUID scheduledId, UpdateSchedulingAdminRequestDTO dto) {
         Scheduling s = findById(scheduledId);
+        Scheduling before = Scheduling.copy(s);
         List<ServiceDomain> services = new ArrayList<>();
         for (UUID id : dto.servicesIds()) {
             ServiceDomain se = serviceDomainService.findById(id);
@@ -122,6 +142,8 @@ public class SchedulingService implements ISchedulingService {
         s.setPriceCharged(finalPrice);
         s.setServices(services);
         s.setUpdatedAt(Instant.now());
+        Scheduling after = Scheduling.copy(s);
+        historyChangesService.create(before, after, HistoryChangedFor.LEILA);
     }
 
     @Override
