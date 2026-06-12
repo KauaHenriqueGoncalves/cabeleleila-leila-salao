@@ -1,0 +1,347 @@
+<div class="page-header">
+
+    <div>
+
+        <h1>
+            Agendamentos
+        </h1>
+
+        <p>
+            Gerencie todos os agendamentos.
+        </p>
+
+    </div>
+
+</div>
+
+<form [formGroup]="filterForm" class="filters">
+
+    <input type="date" formControlName="startDate">
+
+    <input type="date" formControlName="endDate">
+
+    <button type="button" class="primary-button" (click)="search()">
+        Buscar
+    </button>
+
+</form>
+
+<div class="schedulings-grid">
+
+    @for(item of schedulings; track item.id) {
+
+    <div class="scheduling-card">
+
+        <div class="card-top">
+
+            <strong>
+                {{ item.nameClient }}
+            </strong>
+
+            <span class="status" [class.done]="item.status === 'DONE'" [class.scheduled]="item.status === 'SCHEDULED'"
+                [class.cancelled]="item.status === 'CANCELLED'">
+                {{ getStatusLabel(item.status) }}
+            </span>
+
+        </div>
+
+        <div class="card-info">
+
+            <span>
+                {{ item.dateHours | date:'dd/MM/yyyy HH:mm' }}
+            </span>
+
+            <span>
+                {{ item.phoneNumberClient }}
+            </span>
+
+        </div>
+
+        <div class="services">
+
+            @for(service of item.services; track service.id) {
+
+            <span class="service-tag">
+                {{ service.name }}
+            </span>
+
+            }
+
+        </div>
+
+        <div class="price">
+            {{ item.priceCharged | currency:'BRL' }}
+        </div>
+
+        <div class="actions">
+
+            <button class="secondary-button" (click)="openDetails(item)">
+                Detalhes
+            </button>
+
+            <button class="primary-button" (click)="openEdit(item)">
+                Editar
+            </button>
+
+            <button class="danger-button" (click)="delete(item)">
+                Excluir
+            </button>
+
+        </div>
+
+    </div>
+
+    }
+
+</div>
+
+@if(drawerMode) {
+
+<div class="drawer-backdrop" (click)="closeDrawer()">
+
+    <div class="drawer" (click)="$event.stopPropagation()">
+
+        @if(drawerMode === 'details' && selectedScheduling) {
+
+        <div class="drawer-header">
+
+            <h2>
+                Detalhes
+            </h2>
+
+            <button class="close-button" (click)="closeDrawer()">
+                ×
+            </button>
+
+        </div>
+
+        <div class="drawer-content">
+
+            <p>
+                <strong>Cliente:</strong>
+                {{ selectedScheduling.nameClient }}
+            </p>
+
+            <p>
+                <strong>Telefone:</strong>
+                {{ selectedScheduling.phoneNumberClient }}
+            </p>
+
+            <p>
+                <strong>Status:</strong>
+                {{ getStatusLabel(selectedScheduling.status) }}
+            </p>
+
+            <p>
+                <strong>Valor:</strong>
+                {{ selectedScheduling.priceCharged | currency:'BRL' }}
+            </p>
+
+            <p>
+                <strong>Observação:</strong>
+                {{ selectedScheduling.observations }}
+            </p>
+
+            @if(hasSchedulingConflict(selectedScheduling)) {
+
+                <div class="warning-box">
+
+                    <strong>
+                        Atenção
+                    </strong>
+
+                    <span>
+                        Este cliente possui
+                        {{ getWeeklySchedulingCount(selectedScheduling) }}
+                        agendamentos nesta semana.
+
+                        Considere redistribuir os horários para melhorar a agenda.
+                    </span>
+
+                </div>
+
+            }
+
+
+        </div>
+
+        <div class="history-section">
+
+            <h3>
+                Histórico de Alterações
+            </h3>
+
+            @if(loadingHistory) {
+
+            <div class="history-empty">
+                Carregando histórico...
+            </div>
+
+            } @else {
+
+            @if(historyChanges.length === 0) {
+
+            <div class="history-empty">
+                Nenhuma alteração encontrada.
+            </div>
+
+            } @else {
+
+            @for(item of historyChanges;track $index) {
+
+            <div class="history-card">
+
+                <div class="history-date">
+
+                    {{
+                    item.createdAt
+                    | date:'dd/MM/yyyy HH:mm'
+                    }}
+
+                </div>
+
+                <div class="history-row">
+
+                    <span>
+                        Alterado por
+                    </span>
+
+                    <strong>
+                        {{ item.changedFor }}
+                    </strong>
+
+                </div>
+
+                <div class="history-row">
+
+                    <span>
+                        Campo
+                    </span>
+
+                    <strong>
+                        {{ item.fieldChanged }}
+                    </strong>
+
+                </div>
+
+                <div class="history-row">
+
+                    <span>
+                        Valor anterior
+                    </span>
+
+                    <strong>
+                        {{
+                        item.priceBefore
+                        | currency:'BRL'
+                        }}
+                    </strong>
+
+                </div>
+
+                <div class="history-row">
+
+                    <span>
+                        Valor atual
+                    </span>
+
+                    <strong>
+                        {{
+                        item.priceNow
+                        | currency:'BRL'
+                        }}
+                    </strong>
+
+                </div>
+
+            </div>
+
+            }
+
+            }
+
+            }
+
+        </div>
+
+        }
+
+        @if(drawerMode === 'edit' && selectedScheduling) {
+
+        <form [formGroup]="editForm" class="drawer-content">
+
+            <div class="field">
+
+                <label>Status</label>
+
+                <select formControlName="status">
+
+                    @for(status of statuses; track status) {
+
+                    <option [value]="status">
+                        {{ getStatusLabel(status) }}
+                    </option>
+
+                    }
+
+                </select>
+
+            </div>
+
+            <div class="field">
+
+                <label>Data</label>
+
+                <input type="datetime-local" formControlName="dateHours">
+
+            </div>
+
+            <div class="field">
+
+                <label>Origem</label>
+
+                <select formControlName="origin">
+
+                    <option value="APP">
+                        APP
+                    </option>
+
+                    <option value="PHONE_NUMBER">
+                        Telefone
+                    </option>
+
+                </select>
+
+            </div>
+
+            <div class="services-edit">
+
+                @for(service of services; track service.id) {
+
+                <div class="service-option" (click)="toggleService(service.id)">
+
+                    <input type="checkbox" [checked]="selectedServicesIds.includes(service.id)">
+
+                    <span>
+                        {{ service.name }}
+                    </span>
+
+                </div>
+
+                }
+
+            </div>
+
+            <button type="button" class="primary-button" (click)="save()">
+                Salvar Alterações
+            </button>
+
+        </form>
+
+        }
+
+    </div>
+
+</div>
+
+}

@@ -1,0 +1,265 @@
+<div class="page-header">
+
+    <div>
+        <h1>Meus Agendamentos</h1>
+        <p>
+            Consulte seus horários e acompanhe o status.
+        </p>
+    </div>
+
+    <button class="primary-button" routerLink="/app/create-scheduling-client">
+        Novo Agendamento
+    </button>
+
+</div>
+
+<div class="schedulings-grid">
+
+    @for(item of schedulings; track item.id) {
+
+    <div class="scheduling-card">
+
+        <div class="card-top">
+
+            <span class="status" [class.done]="item.status === 'DONE'" [class.scheduled]="item.status === 'SCHEDULED'"
+                [class.cancelled]="item.status === 'CANCELLED'">
+                {{ getStatusLabel(item.status) }}
+            </span>
+
+            <span class="date">
+                {{ item.dateHours | date:'dd/MM/yyyy HH:mm' }}
+            </span>
+
+        </div>
+
+        <div class="services">
+
+            @for(service of item.services; track service.id) {
+
+            <span class="service-tag">
+                {{ service.name }}
+            </span>
+
+            }
+
+        </div>
+
+        <div class="price">
+            {{ item.priceCharged | currency:'BRL' }}
+        </div>
+
+        <div class="actions">
+
+            <button class="secondary-button" (click)="openDetails(item)">
+                Detalhes
+            </button>
+
+            @if(item.status === 'SCHEDULED') {
+
+            <button class="primary-button" (click)="openEdit(item)">
+                Editar
+            </button>
+
+            }
+
+        </div>
+
+    </div>
+
+    }
+
+</div>
+
+@if(!loading && schedulings.length === 0) {
+
+<div class="empty-state">
+
+    <h3>
+        Nenhum agendamento encontrado
+    </h3>
+
+    <p>
+        Crie seu primeiro agendamento.
+    </p>
+
+</div>
+
+}
+
+@if(drawerMode) {
+
+<div class="drawer-backdrop" (click)="closeDrawer()">
+
+    <div class="drawer" (click)="$event.stopPropagation()">
+
+        @if(drawerMode === 'details' && selectedScheduling) {
+
+        <div class="drawer-header">
+
+            <h2>
+                Detalhes do Agendamento
+            </h2>
+
+            <button class="close-button" (click)="closeDrawer()">
+                ×
+            </button>
+
+        </div>
+
+        <div class="drawer-content">
+
+            <div class="detail-item">
+
+                <span>Status</span>
+
+                <strong>
+                    {{
+                    getStatusLabel(
+                    selectedScheduling.status
+                    )
+                    }}
+                </strong>
+
+            </div>
+
+            <div class="detail-item">
+
+                <span>Data</span>
+
+                <strong>
+                    {{
+                    selectedScheduling.dateHours
+                    | date:'dd/MM/yyyy HH:mm'
+                    }}
+                </strong>
+
+            </div>
+
+            <div class="detail-item">
+
+                <span>Cliente</span>
+
+                <strong>
+                    {{ selectedScheduling.nameClient }}
+                </strong>
+
+            </div>
+
+            <div class="detail-item">
+
+                <span>Telefone</span>
+
+                <strong>
+                    {{ selectedScheduling.phoneNumberClient }}
+                </strong>
+
+            </div>
+
+            <div class="detail-item">
+
+                <span>Valor Cobrado</span>
+
+                <strong>
+                    {{
+                    selectedScheduling.priceCharged
+                    | currency:'BRL'
+                    }}
+                </strong>
+
+            </div>
+
+            <div class="detail-section">
+
+                <h3>
+                    Serviços
+                </h3>
+
+                <div class="services">
+
+                    @for(service of selectedScheduling.services; track service.id) {
+
+                    <span class="service-tag">
+                        {{ service.name }}
+                    </span>
+
+                    }
+
+                </div>
+
+            </div>
+
+            @if(selectedScheduling.observations) {
+
+            <div class="detail-section">
+
+                <h3>
+                    Observações
+                </h3>
+
+                <p>
+                    {{ selectedScheduling.observations }}
+                </p>
+
+            </div>
+
+            }
+
+        </div>
+
+        }
+
+        @if(drawerMode === 'edit' && selectedScheduling) {
+
+        <div class="drawer-header">
+
+            <h2>
+                Editar Agendamento
+            </h2>
+
+            <button class="close-button" (click)="closeDrawer()">
+                ×
+            </button>
+
+        </div>
+
+        <div class="drawer-content">
+
+            <p class="drawer-description">
+                Selecione os serviços desejados.
+            </p>
+
+            <div class="services-edit">
+
+                @for(service of availableServices; track service.id) {
+
+                <div class="service-option" (click)="toggleService(service.id)">
+
+                    <input type="checkbox" [checked]="selectedServicesIds.includes(service.id)">
+
+                    <div>
+
+                        <strong>
+                            {{ service.name }}
+                        </strong>
+
+                    </div>
+
+                </div>
+
+                }
+
+            </div>
+
+            <button class="save-button" (click)="saveUpdate()">
+                Salvar Alterações
+            </button>
+
+        </div>
+
+        }
+
+    </div>
+
+</div>
+
+}

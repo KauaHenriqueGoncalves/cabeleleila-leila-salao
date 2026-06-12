@@ -1,0 +1,116 @@
+<form
+  [formGroup]="form"
+  class="page"
+>
+
+  <div class="page-header">
+
+    <h1>
+      Novo Agendamento
+    </h1>
+
+    <p>
+      Escolha os serviços desejados.
+    </p>
+
+  </div>
+
+  <div class="content">
+
+    <div class="services-section">
+
+      <h2>
+        Serviços Disponíveis
+      </h2>
+
+      <div class="services-grid">
+
+        @for(service of services; track service.id) {
+
+          <div
+            class="service-card"
+            [class.selected]="isSelected(service.id)"
+            (click)="toggleService(service.id)"
+          >
+
+            <h3>
+              {{ service.name }}
+            </h3>
+
+            <p>
+              {{ service.description }}
+            </p>
+
+            <span>
+              {{ service.durationMinutes }} min
+            </span>
+
+            <strong>
+              {{ service.price | currency:'BRL' }}
+            </strong>
+
+          </div>
+
+        }
+
+      </div>
+
+    </div>
+
+    <div class="summary">
+
+      <div class="summary-item">
+        <span>Serviços</span>
+        <strong>{{ selectedServices.length }}</strong>
+      </div>
+
+      <div class="summary-item">
+        <span>Duração</span>
+        <strong>{{ totalDuration }} min</strong>
+      </div>
+
+      <div class="summary-item">
+        <span>Total</span>
+        <strong>
+          {{ totalPrice | currency:'BRL' }}
+        </strong>
+      </div>
+
+      <div class="field">
+
+        <label>
+          Data e Hora
+        </label>
+
+        <input
+          type="datetime-local"
+          formControlName="dateHours"
+        >
+
+      </div>
+
+      <div class="field">
+
+        <label>
+          Observações
+        </label>
+
+        <textarea
+          formControlName="observations"
+        ></textarea>
+
+      </div>
+
+      <button
+        type="button"
+        class="save-button"
+        (click)="save()"
+      >
+        Confirmar Agendamento
+      </button>
+
+    </div>
+
+  </div>
+
+</form>

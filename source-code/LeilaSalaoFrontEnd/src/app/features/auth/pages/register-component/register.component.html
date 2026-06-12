@@ -1,0 +1,69 @@
+<div class="register-page">
+  <div class="register-card">
+    <h1>Criar Conta</h1>
+
+    <form [formGroup]="form" (ngSubmit)="submit()">
+      <div class="field">
+        <label>Nome</label>
+
+        <input
+          type="text"
+          formControlName="name"
+          placeholder="Digite seu nome"
+        >
+      </div>
+
+      <div class="field">
+        <label>Telefone</label>
+
+        <input
+          type="text"
+          formControlName="phoneNumber"
+          placeholder="(00) 00000-0000"
+        >
+      </div>
+
+      <div class="field">
+        <label>E-mail</label>
+
+        <input
+          type="email"
+          formControlName="email"
+          placeholder="Digite seu e-mail"
+        >
+      </div>
+
+      <div class="field">
+        <label>Senha</label>
+
+        <input
+          type="password"
+          formControlName="password"
+          placeholder="Digite sua senha"
+        >
+      </div>
+
+      <div class="field">
+        <label>Confirmar senha</label>
+
+        <input
+          type="password"
+          formControlName="confirmPassword"
+          placeholder="Confirme sua senha"
+        >
+      </div>
+
+      <button
+        class="submit-button"
+        type="submit"
+        [disabled]="form.invalid"
+      >
+        Criar Conta
+      </button>
+    </form>
+
+    <a routerLink="/login" class="login-link">
+      Já possui conta? Entrar
+    </a>
+  </div>
+</div>

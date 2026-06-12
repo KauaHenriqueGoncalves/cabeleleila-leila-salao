@@ -1,0 +1,42 @@
+<div class="login-page">
+  <div class="login-card">
+    <h1>Entrar</h1>
+
+    <form [formGroup]="form" (ngSubmit)="submit()">
+      <div class="field">
+        <label>E-mail</label>
+
+        <input
+          type="email"
+          formControlName="email"
+          placeholder="Digite seu e-mail"
+        >
+      </div>
+
+      <div class="field">
+        <label>Senha</label>
+
+        <input
+          type="password"
+          formControlName="password"
+          placeholder="Digite sua senha"
+        >
+      </div>
+
+      <button
+        type="submit"
+        class="submit-button"
+        [disabled]="form.invalid || loading"
+      >
+        Entrar
+      </button>
+    </form>
+
+    <a
+      routerLink="/register"
+      class="register-link"
+    >
+      Criar uma conta
+    </a>
+  </div>
+</div>
