@@ -1,0 +1,46 @@
+<div class="dashboard">
+
+  <div class="dashboard-header">
+    <div>
+      <h1>Dashboard</h1>
+      <p>Acompanhe os principais indicadores do salão.</p>
+    </div>
+  </div>
+
+  <div class="cards">
+
+    <div class="card">
+      <span>Total de Agendamentos</span>
+      <strong>{{ dashboard?.totalSchedulings ?? 0 }}</strong>
+    </div>
+
+    <div class="card">
+      <span>Concluídos</span>
+      <strong>{{ dashboard?.completed ?? 0 }}</strong>
+    </div>
+
+    <div class="card">
+      <span>Pendentes</span>
+      <strong>{{ dashboard?.pending ?? 0 }}</strong>
+    </div>
+
+    <div class="card">
+      <span>Cancelados</span>
+      <strong>{{ dashboard?.cancelled ?? 0 }}</strong>
+    </div>
+
+    <div class="card">
+      <span>Receita Estimada</span>
+      <strong>
+        {{ (dashboard?.estimatedRevenue ?? 0) | currency:'BRL' }}
+      </strong>
+    </div>
+
+    <div class="card">
+      <span>Total de Clientes</span>
+      <strong>{{ dashboard?.totalClients ?? 0 }}</strong>
+    </div>
+
+  </div>
+
+</div>

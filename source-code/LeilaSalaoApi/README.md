@@ -141,7 +141,7 @@ mvn clean package
 * Controle de agendamentos
 * Dashboard administrativo
 * Histórico de alterações
-* Autenticação JWT
+* Autenticação JWT com RSA
 * Controle de acesso por perfil
 * Persistência com PostgreSQL
 * Banco H2 para desenvolvimento

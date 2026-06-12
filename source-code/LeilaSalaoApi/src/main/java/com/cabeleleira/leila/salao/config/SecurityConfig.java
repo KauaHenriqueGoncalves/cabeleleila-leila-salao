@@ -14,6 +14,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.cors.CorsConfigurationSource;
 
 import java.util.List;
 
@@ -45,9 +46,9 @@ public class SecurityConfig {
 
     @Bean
     @Profile("!h2")
-    public SecurityFilterChain securedFilterChain(HttpSecurity http) {
+    public SecurityFilterChain securedFilterChain(HttpSecurity http, CorsConfigurationSource corsConfigurationSource) {
         http
-                .cors(withDefaults())
+                .cors(cors -> cors.configurationSource(corsConfigurationSource))
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
@@ -57,6 +58,7 @@ public class SecurityConfig {
                                 "/clients",
                                 "/auth"
                         ).permitAll()
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .oauth2ResourceServer(oauth -> oauth.jwt(withDefaults()));

@@ -11,5 +11,7 @@ import java.util.UUID;
 public interface IHistoryChangesService {
     List<HistoryChangesToListResponseDTO> findAllBySchedulingId(UUID id);
     HistoryChanges findById(UUID id);
+    List<HistoryChanges> findAll(UUID id);
     UUID create(Scheduling before, Scheduling after, HistoryChangedFor changedFor);
+    void deleteAll(List<HistoryChanges> histories);
 }

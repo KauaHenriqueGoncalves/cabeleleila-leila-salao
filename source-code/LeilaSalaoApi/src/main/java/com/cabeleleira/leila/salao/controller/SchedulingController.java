@@ -56,8 +56,9 @@ public class SchedulingController {
     }
 
     @GetMapping("/dates")
+    @PreAuthorize("hasRole('admin')")
     public ResponseEntity<List<SchedulingToListResponseDTO>> findAllBetweenDates(
-            @RequestBody @Valid SchedulingBetweenDatesDTO betweenDatesDTO
+            @Valid SchedulingBetweenDatesDTO betweenDatesDTO
     ) {
         List<SchedulingToListResponseDTO> response =
                 schedulingService.findAllBetweenDates(betweenDatesDTO.start(), betweenDatesDTO.end());

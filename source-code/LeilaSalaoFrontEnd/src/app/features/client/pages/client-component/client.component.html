@@ -1,0 +1,67 @@
+<div class="clients-page">
+
+    <div class="page-header">
+        <div>
+            <h1>Clientes</h1>
+            <p>
+                Gerencie os clientes cadastrados.
+            </p>
+        </div>
+    </div>
+
+    <div class="table-container">
+
+        <table>
+
+            <thead>
+                <tr>
+                    <th>Nome</th>
+                    <th>E-mail</th>
+                    <th>Telefone</th>
+                    <th></th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                @for(client of clients; track client.id) {
+
+                <tr>
+
+                    <td>
+                        {{ client.name }}
+                    </td>
+
+                    <td>
+                        {{ client.email }}
+                    </td>
+
+                    <td>
+                        {{ client.phoneNumber }}
+                    </td>
+
+                    <td class="actions">
+                        <button class="delete-button" (click)="deleteClient(client)">
+                            Excluir
+                        </button>
+                    </td>
+
+                </tr>
+
+                }
+
+                @if(!loading && clients.length === 0) {
+                <tr>
+                    <td colspan="4" class="empty">
+                        Nenhum cliente encontrado
+                    </td>
+                </tr>
+                }
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>

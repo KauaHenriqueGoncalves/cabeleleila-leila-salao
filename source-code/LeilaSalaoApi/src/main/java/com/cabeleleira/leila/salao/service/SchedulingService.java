@@ -1,6 +1,7 @@
 package com.cabeleleira.leila.salao.service;
 
 import com.cabeleleira.leila.salao.domain.Client;
+import com.cabeleleira.leila.salao.domain.HistoryChanges;
 import com.cabeleleira.leila.salao.domain.Scheduling;
 import com.cabeleleira.leila.salao.domain.ServiceDomain;
 import com.cabeleleira.leila.salao.dto.CreateSchedulingRequestDTO;

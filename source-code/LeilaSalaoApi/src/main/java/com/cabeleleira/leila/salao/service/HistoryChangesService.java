@@ -46,6 +46,11 @@ public class HistoryChangesService implements IHistoryChangesService {
     }
 
     @Override
+    public List<HistoryChanges> findAll(UUID id) {
+        return List.of();
+    }
+
+    @Override
     @Transactional
     public UUID create(Scheduling before, Scheduling after, HistoryChangedFor changedFor) {
         String fieldsChanged = getDifferentiesFields(before, after);
@@ -59,6 +64,11 @@ public class HistoryChangesService implements IHistoryChangesService {
                 Instant.now()
         );
         return historyChangesRepository.save(changes).getId();
+    }
+
+    @Override
+    public void deleteAll(List<HistoryChanges> histories) {
+        historyChangesRepository.deleteAll(histories);
     }
 
     private String getDifferentiesFields(Scheduling before, Scheduling after) {

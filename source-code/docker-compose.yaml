@@ -1,0 +1,76 @@
+services:
+  spring_api:
+    container_name: leila-salai-api
+    mem_limit: 1g
+    cpus: 1
+    build:
+      context: ./LeilaSalaoApi
+      dockerfile: Dockerfile
+    ports:
+        - "8080:8080"
+    env_file:
+        - .env
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ./LeilaSalaoApi/out/keys-rsa-jwt:/app/out/keys-rsa-jwt
+    environment:
+        SPRING_SERVER_PORT: ${SPRING_SERVER_PORT}
+        SPRING_PROFILE: ${SPRING_PROFILE}
+        ADMIN_EMAIL: ${ADMIN_EMAIL}
+        ADMIN_PASSWORD: ${ADMIN_PASSWORD}
+        DATABASE_URL_TEST: ${DATABASE_URL_TEST}
+        DATABASE_USERNAME_TEST: ${DATABASE_USERNAME_TEST}
+        DATABASE_PASSWORD_TEST: ${DATABASE_PASSWORD_TEST}
+    networks:
+        - app_net
+    restart: unless-stopped
+
+  angular_app:
+    container_name: leila-salao-frontend
+    mem_limit: 512m
+    cpus: 1
+    build:
+      context: ./LeilaSalaoFrontEnd
+      dockerfile: Dockerfile
+    ports:
+      - "4200:4200"
+    volumes:
+      - ./LeilaSalaoFrontEnd:/app
+      - /app/node_modules
+    depends_on:
+      - spring_api
+    networks:
+      - app_net
+    restart: unless-stopped
+
+  postgres:
+    container_name: system_management_postgres_test
+    image: postgres:15.14-alpine3.21
+    restart: unless-stopped
+    mem_limit: 1g
+    cpus: 1
+    shm_size: 64mb
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres-123
+      POSTGRES_DB: system_management
+    ports:
+      - "5433:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - postgres_test_data:/var/lib/postgresql/data
+    networks:
+      - app_net
+
+volumes:
+  postgres_test_data:
+
+networks:
+  app_net:
+    driver: bridge

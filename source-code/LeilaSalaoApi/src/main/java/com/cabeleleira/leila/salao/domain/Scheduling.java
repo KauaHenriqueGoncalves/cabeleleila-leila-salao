@@ -67,6 +67,9 @@ public final class Scheduling {
     )
     private List<ServiceDomain> serviceDomains = new ArrayList<>();
 
+    @OneToMany(mappedBy = "scheduling", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<HistoryChanges> historyChanges = new ArrayList<>();
+
     public Scheduling(){
     }
 
